@@ -17,7 +17,7 @@ export type OniUser = {
   accessToken: string;
 };
 
-const clientId = api.oidc?.clientId || 'TODO';
+const clientId = api.oidc?.clientId;
 
 let userManager: UserManager | undefined;
 let isRedirecting = false;
@@ -28,6 +28,10 @@ export const authReady: Promise<void> = new Promise((resolve) => {
 });
 
 const getUserManager = async () => {
+  if (!clientId) {
+    throw new Error('OIDC is not configured');
+  }
+
   const store = useAuthStore();
 
   if (userManager) {
@@ -169,7 +173,7 @@ export const forceRenewToken = async (): Promise<string | undefined> => {
 };
 
 export const login = async () => {
-  if (isRedirecting) {
+  if (!clientId || isRedirecting) {
     return;
   }
   isRedirecting = true;
@@ -190,6 +194,10 @@ export const login = async () => {
 };
 
 export const handleCallback = async () => {
+  if (!clientId) {
+    return;
+  }
+
   const userManager = await getUserManager();
 
   const user = await userManager.signinRedirectCallback();
@@ -202,6 +210,10 @@ export const handleCallback = async () => {
 };
 
 export const getUser = async () => {
+  if (!clientId) {
+    return;
+  }
+
   const userManager = await getUserManager();
   const user = await userManager.getUser();
   if (user && !user.expired) {
