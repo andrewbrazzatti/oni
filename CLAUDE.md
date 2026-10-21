@@ -45,7 +45,7 @@ build emits `dist/` for consumers using the default package exports.
 - `ApiService` is provided via Vue's `provide`/`inject` from `main.ts`
 - `src/services/api.ts` supplies portal URLs and optional OIDC callbacks to `createOniClient`, and adapts client errors to the existing view contracts
 - API responses use RO-Crate format, parsed inside the client with `ro-crate`
-- Pure helpers live in `packages/oni-client/src/{capabilities,search,metadata,segments,tools}.ts` and are exported from `@researchdatabox/oni-client`; `tools.ts` includes `first()` for single-value access
+- Pure helpers live in `packages/oni-client/src/{capabilities,search,metadata,segments,tools}.ts`, with display helpers (licences, identifiers, descriptions, formats, hidden files) in `{values,license,identifiers,description,formats,files}.ts` and are exported from `@researchdatabox/oni-client`; `tools.ts` includes `first()` for single-value access
 - Portal adapters retain configuration, Vue state and routing: `src/stores/capabilities.ts`, `src/composables/search.ts`, `src/lib/metadata.ts`, `src/segments.ts` and `src/lib/tools.ts`
 - `src/lib/tools.ts` re-exports `first()` / `joinAll()` and keeps portal formatting, text and route helpers
 

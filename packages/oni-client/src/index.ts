@@ -10,8 +10,16 @@ export {
 } from './capabilities.js';
 export type { EntityWithMetadata, OniAuth, OniClient, OniClientOptions, RequestOptions } from './client.js';
 export { createOniClient } from './client.js';
+export { descriptionParagraphs, plainDescription } from './description.js';
 export type { OniErrorKind } from './error.js';
 export { OniClientError } from './error.js';
+export type { HiddenFilePattern } from './files.js';
+export { defaultHiddenFilePatterns, entityFilePath, hiddenFileMatcher } from './files.js';
+export { formatLabel } from './formats.js';
+export type { PublicIdentifier } from './identifiers.js';
+export { canonicalDoi, publicIdentifiers } from './identifiers.js';
+export type { LicenseLabel } from './license.js';
+export { licenseLabel } from './license.js';
 export type { MetadataField, MetadataLabelOptions, MetadataSelection } from './metadata.js';
 export {
   buildMetadataNameMap,
@@ -50,3 +58,4 @@ export {
 } from './segments.js';
 export { first, getBasePathUrl, getEntityUrl, joinAll, parseContentSize } from './tools.js';
 export type * from './types.js';
+export { metadataText, metadataValues, safeHref } from './values.js';

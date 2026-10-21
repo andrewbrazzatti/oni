@@ -155,6 +155,17 @@ The package exports wire types and helpers for:
   `parseStartParam`, `parseTierParam`, `startParamToMs`, `matchAnnotation` handle
   parsing and time positions without a router.
 - Tools: `first`, `joinAll`, `parseContentSize`, `getBasePathUrl`, `getEntityUrl`.
+- Display: helpers that turn real-world crate values into text researchers can
+  read. `metadataValues`/`metadataText` read scalar, array and linked values
+  without serialising the proxy graph; `safeHref` allows only http(s)/mailto.
+  `licenseLabel` returns `{ short, full, url? }`, mapping Creative Commons URLs
+  (including legacy `_:license/<url>` references) to standard names.
+  `publicIdentifiers`/`canonicalDoi` list DOIs first and drop storage locators.
+  `descriptionParagraphs`/`plainDescription` turn authored markup into plain
+  paragraphs without a DOM; render the result as text, never as HTML.
+  `formatLabel` gives `CSV`/`XLSX`/`PDF` labels from MIME types, PRONOM PUIDs
+  or extensions. `hiddenFileMatcher`, `defaultHiddenFilePatterns` and
+  `entityFilePath` hide crate scaffolding such as `ro-crate-preview.html`.
 
 ## Development and releases
 
