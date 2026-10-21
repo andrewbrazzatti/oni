@@ -35,7 +35,7 @@ build emits `dist/` for consumers using the default package exports.
 - `src/views/` — page-level components, one per route
 - `src/components/` — reusable components; `cards/` for card layouts, `widgets/` for small pieces
 - `src/composables/` — shared composition functions (`useEntityView`, `useEafParser`, search logic, head/meta)
-- `src/services/` — `api.ts` (ApiService facade over `createOniClient`), `auth.ts` (OIDC via oidc-client-ts)
+- `src/services/` — `api.ts` (ApiService facade over `createOniClient`), `auth.ts` (Pinia/router adapter over the client's `createOidcSession` from `@researchdatabox/oni-client/oidc`)
 - `src/stores/` — Pinia stores (auth, i18n, splash) with localStorage persistence
 - `src/router/` — Vue Router 5 with history mode, auth guards
 - `src/configuration.ts` — Zod schema defining all configuration options

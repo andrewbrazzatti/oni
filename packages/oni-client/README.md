@@ -3,7 +3,7 @@
 Framework-independent TypeScript client for the Oni RO-Crate API. ESM JavaScript
 and declarations are built into `dist/`. Runtime dependencies are `ro-crate`
 and `zod`; importing the package performs no network requests and requires no
-DOM globals. GPL-3.0, matching [Oni](https://github.com/crate-works/oni).
+DOM globals. The optional `/oidc` entry adds browser sign-in sessions. GPL-3.0, matching [Oni](https://github.com/crate-works/oni).
 
 ## Usage
 
@@ -82,9 +82,51 @@ Token callbacks return a string, null or undefined, synchronously or through a
 promise. Each request asks for the current token. A 401 triggers at most one
 renewal and retry; simultaneous requests share renewal, including late failures
 from an old token. A 403 never renews or resets authentication. After a failed
-renewal/retry the client calls `onUnauthorized` and rejects. The application
-owns token storage, login/logout, OIDC callbacks and navigation. Aborting a
+renewal/retry the client calls `onUnauthorized` and rejects. Aborting a
 request waiting for shared renewal does not cancel other callers.
+
+### OIDC sessions
+
+`@researchdatabox/oni-client/oidc` provides a ready-made session for OpenID
+Connect providers. It needs the optional peer dependency `oidc-client-ts`
+(^3.5); the main entry never imports it.
+
+```ts
+import { createOniClient } from '@researchdatabox/oni-client';
+import { createOidcSession } from '@researchdatabox/oni-client/oidc';
+
+const session = createOidcSession({
+  authority: 'https://idp.example.org',
+  clientId: 'portal',
+  redirectUri: `${location.origin}/auth/callback`,
+});
+const client = createOniClient({ endpoint: '/api', baseUrl: document.baseURI, auth: session.auth });
+await session.init();
+
+// Callback route:
+const result = await session.handleCallback();
+if (result) navigate(result.returnPath);
+```
+
+The session uses the authorisation code flow with PKCE. It restores stored
+sessions, renews expired tokens silently and shares one renewal between callers.
+`login(returnPath?)` coalesces concurrent redirects. `handleCallback()` completes
+redirect and silent-renewal callbacks, returning `undefined` for the latter.
+Return paths must be root-relative and never point at the callback route; unsafe
+values fall back to `defaultReturnPath`. `logout()` ends the portal session
+without signing out of the provider.
+
+`getState()` returns a stable `{ status: 'loading' | 'anonymous' |
+'authenticated', user? }` snapshot and `subscribe(listener)` reports changes, so
+framework stores can mirror it (Pinia, React `useSyncExternalStore`, signals).
+`ready` resolves once `init()` settles.
+
+Defaults: scope `openid profile email`, `sessionStorage` (one session per tab),
+automatic silent renewal, and an anonymous portal after renewal fails. Options
+`storage`, `scope`, `basePath` (deployment base for stored return paths),
+`loginOnRenewalFailure` (redirect to sign in instead) and `settings` (raw
+`oidc-client-ts` overrides) cover other deployments. Applications using another
+token source can still pass their own `auth` adapter.
 
 Client operations reject with `OniClientError`, carrying `kind`, optional HTTP
 `status`, backend `code`, `details`, `requestId` and underlying `cause`.

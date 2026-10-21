@@ -6,8 +6,9 @@ const oidc = vi.hoisted(() => {
     getUser: vi.fn(),
     signinSilent: vi.fn(),
     signinRedirect: vi.fn(),
-    signinRedirectCallback: vi.fn(),
+    signinCallback: vi.fn(),
     removeUser: vi.fn(),
+    stopSilentRenew: vi.fn(),
     events: {
       addUserLoaded: vi.fn((fn) => {
         handlers.loaded = fn;
@@ -35,7 +36,11 @@ vi.mock('oidc-client-ts', () => ({
   WebStorageStateStore: class {},
 }));
 
-const session = { access_token: 'valid', expired: false, profile: { email: 'member@test', name: 'Member' } };
+const session = {
+  access_token: 'valid',
+  expired: false,
+  profile: { sub: 'member', email: 'member@test', name: 'Member' },
+};
 const originalUrl = window.location.href;
 
 beforeEach(() => {
@@ -130,13 +135,14 @@ it('skips silent renewal without a session and resets all Pinia session fields',
 
 it.each(['expired', 'error'])('preserves reset and one login redirect on the %s event', async (event) => {
   const { auth, store } = await setup();
+  oidc.manager.getUser.mockResolvedValue(session);
   await auth.initAuth();
-  store.isLoggedIn = true;
+  expect(store.isLoggedIn).toBe(true);
   oidc.manager.signinSilent.mockRejectedValue(new Error('renewal failed'));
-  await oidc.handlers[event]?.();
-  await oidc.handlers.error?.();
+  oidc.handlers[event]?.();
+  oidc.handlers.error?.();
+  await vi.waitFor(() => expect(oidc.manager.signinRedirect).toHaveBeenCalledTimes(1));
   expect(store.isLoggedIn).toBe(false);
-  expect(oidc.manager.signinRedirect).toHaveBeenCalledTimes(1);
 });
 
 describe.each(['/', '/portal/'])('OIDC routes at %s', (base) => {
@@ -152,7 +158,7 @@ describe.each(['/', '/portal/'])('OIDC routes at %s', (base) => {
       }),
     );
     expect(oidc.manager.signinRedirect).toHaveBeenCalledExactlyOnceWith({
-      state: { returnUrl: '/file?id=a%2Fb&start=9' },
+      state: { returnPath: '/file?id=a%2Fb&start=9' },
     });
   });
 
@@ -162,10 +168,10 @@ describe.each(['/', '/portal/'])('OIDC routes at %s', (base) => {
     const { auth } = await setup();
     await auth.initAuth();
     await auth.authReady;
-    expect(oidc.settings).not.toHaveBeenCalled();
-    oidc.manager.signinRedirectCallback.mockResolvedValue({
+    expect(oidc.manager.getUser).not.toHaveBeenCalled();
+    oidc.manager.signinCallback.mockResolvedValue({
       ...session,
-      state: { returnUrl: '/file?id=a%2Fb&start=9' },
+      state: { returnPath: '/file?id=a%2Fb&start=9' },
     });
     expect(await auth.handleCallback()).toEqual({
       user: expect.objectContaining({ email: 'member@test', accessToken: 'valid' }),

@@ -17,6 +17,11 @@
       "@researchdatabox/source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./oidc": {
+      "@researchdatabox/source": "./src/oidc.ts",
+      "types": "./dist/oidc.d.ts",
+      "import": "./dist/oidc.js"
     }
   },
   "files": [
@@ -35,12 +40,21 @@
     "prepack": "pnpm build"
   },
   "devDependencies": {
+    "oidc-client-ts": "^3.5.0",
     "typescript": "^6.0.3",
     "vitest": "^5.0.1"
   },
   "dependencies": {
     "ro-crate": "^3.7.2",
     "zod": "^4.6.5"
+  },
+  "peerDependencies": {
+    "oidc-client-ts": "^3.5.0"
+  },
+  "peerDependenciesMeta": {
+    "oidc-client-ts": {
+      "optional": true
+    }
   },
   "author": "Moises Sacal",
   "repository": {
