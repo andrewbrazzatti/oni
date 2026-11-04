@@ -1,4 +1,4 @@
-packages: ['packages/*']
+packages: ["packages/*"]
 
 autoDedupe: true
 saveTypes: true

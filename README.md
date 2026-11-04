@@ -116,18 +116,18 @@ A few patterns worth knowing before reading the code:
 
 ## Development workflow
 
-| Command | Purpose |
-| --- | --- |
-| `pnpm dev` | Start the Vite dev server on port 5173 (PARADISEC staging) |
-| `pnpm dev:<target>` | Start the dev server against `paradisec-stage`, `paradisec`, `ldaca-dev`, or `local` |
-| `pnpm build` | Type-check and build the portal in parallel |
-| `pnpm preview` | Serve the production build locally |
-| `pnpm test:unit` | Vitest unit tests (jsdom) |
-| `pnpm --filter @researchdatabox/oni-client test` | Client unit tests (Node) |
-| `pnpm lint:biome` | Biome lint + format check |
-| `pnpm lint:types` | `vue-tsc --build` type check |
-| `pnpm lint:knip` | Detect unused files, exports, and dependencies |
-| `pnpm setup:vocabs vocab.json` | Refresh vocabs manually (also runs after `pnpm install`) |
+| Command                                          | Purpose                                                                              |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `pnpm dev`                                       | Start the Vite dev server on port 5173 (PARADISEC staging)                           |
+| `pnpm dev:<target>`                              | Start the dev server against `paradisec-stage`, `paradisec`, `ldaca-dev`, or `local` |
+| `pnpm build`                                     | Type-check and build the portal in parallel                                          |
+| `pnpm preview`                                   | Serve the production build locally                                                   |
+| `pnpm test:unit`                                 | Vitest unit tests (jsdom)                                                            |
+| `pnpm --filter @researchdatabox/oni-client test` | Client unit tests (Node)                                                             |
+| `pnpm lint:biome`                                | Biome lint + format check                                                            |
+| `pnpm lint:types`                                | `vue-tsc --build` type check                                                         |
+| `pnpm lint:knip`                                 | Detect unused files, exports, and dependencies                                       |
+| `pnpm setup:vocabs vocab.json`                   | Refresh vocabs manually (also runs after `pnpm install`)                             |
 
 Pre-commit hooks (lefthook) run `lint:biome`, `lint:types`, and `lint:knip`
 in parallel on every commit. Don't bypass them with `--no-verify` — fix the

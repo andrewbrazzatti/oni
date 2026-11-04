@@ -21,10 +21,7 @@ const client = createOniClient({
 });
 const controller = new AbortController();
 try {
-  const results = await client.search(
-    { query: 'language', limit: 10, offset: 0 },
-    { signal: controller.signal },
-  );
+  const results = await client.search({ query: 'language', limit: 10, offset: 0 }, { signal: controller.signal });
   const record = await client.getEntityWithMetadata(results.entities[0].id);
   console.log(record.entity, record.metadata, record.metadataError);
 } catch (error) {
